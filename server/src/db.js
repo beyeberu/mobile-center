@@ -4,9 +4,10 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const serverRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
-mkdirSync(join(serverRoot, 'data'), { recursive: true });
+const dataDirectory = process.env.STORAGE_DIR || join(serverRoot, 'data');
+mkdirSync(dataDirectory, { recursive: true });
 
-export const database = new Database(join(serverRoot, 'data', 'mobile-center.sqlite'));
+export const database = new Database(join(dataDirectory, 'mobile-center.sqlite'));
 database.pragma('journal_mode = WAL');
 database.pragma('foreign_keys = ON');
 
@@ -115,4 +116,7 @@ if (serviceCount === 0) {
   for (const [id, name, description, price, icon] of seededServices) addService.run(id, name, description, price, icon);
 }
 
-export const paths = { serverRoot, uploads: join(serverRoot, 'uploads') };
+export const paths = {
+  serverRoot,
+  uploads: process.env.STORAGE_DIR ? join(process.env.STORAGE_DIR, 'uploads') : join(serverRoot, 'uploads'),
+};

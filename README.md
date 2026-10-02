@@ -14,35 +14,11 @@ npm run dev
 Open the Vite URL printed in the terminal, usually `http://localhost:5173`. The API runs on port 3001. The first server start creates an admin account and prints its one-time password in the server terminal. Save it; the password is stored as a scrypt hash and is not shown again. The admin sign-in is at `/admin`.
 
 To set a chosen password before the first server start, set `ADMIN_PASSWORD` to at least 12 characters in the server process environment. `ADMIN_USERNAME` defaults to `admin`. To rotate an existing admin password, set `ADMIN_PASSWORD` and restart the API; the database is retained and the password is re-hashed.
+The project includes `render.yaml` for a single Render web service serving both the React site and Express API. It uses a persistent disk at `/var/data` for SQLite and image uploads, and health-checks `/api/health`.
 
-## Business details
+To deploy, create a new Blueprint on Render from `https://github.com/beyeberu/mobile-center`. Set the prompted `ADMIN_PASSWORD` to a unique value of at least 12 characters. Render generates the persistent `SESSION_SECRET`. After deployment, open the generated service URL; sign in to the dashboard at `/admin`.
 
-Update `client/src/storeConfig.js` before launch with your currency, business phone, WhatsApp number (country code and digits), address, locality, and opening hours. The sample catalog and product photos are starter content; replace them in the admin dashboard with your inventory and images.
-
-## Admin dashboard
-
-Sign in at `/admin` to manage phones, upload up to eight photos per phone, update prices and stock, manage repair services and icons, and update order or repair-request statuses. Changes are saved to the same database used by the customer site. Customers can place orders and submit repair requests without creating an account.
-
-## Data and uploads
-
-- SQLite database: `server/data/mobile-center.sqlite`
-- Uploaded product photos: `server/uploads/`
-- Back up both paths together. These local files are not automatically synchronized to another machine.
-
-## Production
-
-```sh
-npm run build
-npm start
-```
-
-Set `NODE_ENV=production`, a persistent random `SESSION_SECRET`, `ADMIN_USERNAME`, and `ADMIN_PASSWORD` in the server environment. Set `PORT` if the default API port 3001 is unavailable. Serve the app over HTTPS in production; the admin session cookie is marked secure in production.
-# React + Node Starter
-
-A React frontend powered by Vite and a Node.js API powered by Express.
-
-## Requirements
-
+The Render Starter service and persistent disk are paid resources. Back up the persistent disk regularly. For other production hosts, configure `NODE_ENV=production`, `STORAGE_DIR` to a persistent writable directory, a persistent random `SESSION_SECRET` of at least 32 characters, `ADMIN_USERNAME`, and `ADMIN_PASSWORD`. Serve over HTTPS so the admin session cookie remains secure.
 - Node.js 20.19+ or 22.12+
 - npm
 
