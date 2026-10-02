@@ -14,30 +14,11 @@ npm run dev
 Open the Vite URL printed in the terminal, usually `http://localhost:5173`. The API runs on port 3001. The first server start creates an admin account and prints its one-time password in the server terminal. Save it; the password is stored as a scrypt hash and is not shown again. The admin sign-in is at `/admin`.
 
 To set a chosen password before the first server start, set `ADMIN_PASSWORD` to at least 12 characters in the server process environment. `ADMIN_USERNAME` defaults to `admin`. To rotate an existing admin password, set `ADMIN_PASSWORD` and restart the API; the database is retained and the password is re-hashed.
-The project includes `render.yaml` for a single Render web service serving both the React site and Express API. It uses a persistent disk at `/var/data` for SQLite and image uploads, and health-checks `/api/health`.
 
-To deploy, create a new Blueprint on Render from `https://github.com/beyeberu/mobile-center`. Set the prompted `ADMIN_PASSWORD` to a unique value of at least 12 characters. Render generates the persistent `SESSION_SECRET`. After deployment, open the generated service URL; sign in to the dashboard at `/admin`.
+## Free deployment
 
-The Render Starter service and persistent disk are paid resources. Back up the persistent disk regularly. For other production hosts, configure `NODE_ENV=production`, `STORAGE_DIR` to a persistent writable directory, a persistent random `SESSION_SECRET` of at least 32 characters, `ADMIN_USERNAME`, and `ADMIN_PASSWORD`. Serve over HTTPS so the admin session cookie remains secure.
-- Node.js 20.19+ or 22.12+
-- npm
+The project includes `render.yaml` for a no-cost Render web service serving the React site and Express API together. It health-checks `/api/health` and prompts for `ADMIN_PASSWORD` during setup. Set it to a unique value of at least 12 characters; Render generates `SESSION_SECRET`. The admin dashboard is at `/admin` on the deployed service URL.
 
-## Run in development
+**Free-tier storage is temporary.** SQLite orders, stock edits, and uploaded product images are stored on the instance filesystem and may be lost when Render restarts, sleeps, or redeploys the service. The free instance may also take a short time to wake after inactivity. This setup is suitable for a preview, not dependable live shop operations. Durable data requires a persistent database and image storage, which may have a cost.
 
-From the project root, install dependencies and start both servers:
-
-```sh
-npm install
-npm run dev
-```
-
-Open the Vite address printed in the terminal (normally `http://localhost:5173`). The client proxies `/api` requests to the Express server on port 3001.
-
-## Other commands
-
-```sh
-npm run build
-npm start
-```
-
-The production API listens on port 3001 by default. Set the `PORT` environment variable to change it.
+To deploy, open Render, choose **New → Blueprint**, and select `beyeberu/mobile-center`. For a durable production store on another host, configure a persistent writable `STORAGE_DIR`, `NODE_ENV=production`, a persistent random `SESSION_SECRET` of at least 32 characters, `ADMIN_USERNAME`, and `ADMIN_PASSWORD`. Serve over HTTPS so the admin session cookie remains secure.
